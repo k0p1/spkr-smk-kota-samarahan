@@ -12,8 +12,11 @@ import android.widget.Filter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -52,22 +55,34 @@ public class ScannerResult extends AppCompatActivity {
         disableEdit(laptopID);
 
         dbop = new DatabaseOp();
-        //dreff = FirebaseDatabase.getInstance().getReference().child("Laptop");
-        dreff = dbop.getChild("Laptop");
+        dreff = FirebaseDatabase.getInstance().getReference().child("Laptop");
 
         //click save button
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
                 try {
-                    dreff.child(li.getSerialNo()).setValue(li);
-                    Toast.makeText(ScannerResult.this, "Record updated",Toast.LENGTH_SHORT).show();
-                    //go back to home page
+                    dbop.insertRecord("Laptop", li.getClass(), li.getSerialNo(), ScannerResult.this);
                     Intent intent = new Intent(ScannerResult.this, MainActivity.class);
                     startActivity(intent);
+//                    dreff.child(li.getSerialNo()).setValue(li).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                            Toast.makeText(ScannerResult.this, "Record updated",Toast.LENGTH_SHORT).show();
+//                            //go back to home page
+//                            Intent intent = new Intent(ScannerResult.this, MainActivity.class);
+//                            startActivity(intent);
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            Toast.makeText(ScannerResult.this, "Record update failed...",Toast.LENGTH_SHORT).show();
+//                            //show a dialog?
+//                        }
+//                    });
 
                 } catch (Exception e) {
-                    Toast.makeText(ScannerResult.this, e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(ScannerResult.this, "Exception occurred: "+e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });

@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class LaptopInfo extends LaptopCheckOutInfo implements Serializable, DAO {
 
-    private String serialNo =  "";
-    private String registrationNo = "";
-    private String laptopID = "";
+    private String serialNo =  "testingLaptopInfo";
+    private String registrationNo = "LaptopInfo";
+    private String laptopID = "1234LaptopInfo";
     private String status;
 
     public String getLaptopID() {

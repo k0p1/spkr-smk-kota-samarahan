@@ -3,12 +3,39 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_scannerHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:hint="Place the QR Code in the Rectangle to scan it."
+            android:layout_marginTop="350dp"
+            android:textAlignment="center"
+            android:textColorHint="@color/primary_white"
+            android:textColor="@color/primary_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center_horizontal" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
+

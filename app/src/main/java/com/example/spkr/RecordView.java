@@ -119,7 +119,7 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
 
     @Override
     public void onRecordSelected(LaptopCheckOutInfo checkOutInfo) {
-        Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getLaptopInfo().getSerialNo() + ", " + checkOutInfo.getLaptopInfo().getLaptopID(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getSerialNo() + ", " + checkOutInfo.getLaptopID(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -157,6 +157,7 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setFocusable(true);
 
         // listening to search query text change
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

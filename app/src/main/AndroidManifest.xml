@@ -33,7 +33,8 @@
 
         <activity android:name=".RecordView"
             android:label="Records"
-            android:theme="@style/AppTheme.PopupOverlay">
+            android:theme="@style/AppTheme.PopupOverlay"
+            android:parentActivityName="com.example.spkr.MainActivity">
 
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />

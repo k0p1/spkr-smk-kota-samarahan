@@ -66,8 +66,8 @@ import java.util.List;
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final LaptopCheckOutInfo laptopCheckOutInfo = laptopCheckOutInfoListFiltered.get(position);
-        holder.laptopID.setText(laptopCheckOutInfo.laptopInfo.getLaptopID());
-        holder.serialNo.setText(laptopCheckOutInfo.laptopInfo.getSerialNo());
+        holder.laptopID.setText(laptopCheckOutInfo.getLaptopID());
+        holder.serialNo.setText(laptopCheckOutInfo.getSerialNo());
 
 //        Glide.with(context)
 //                .load(contact.getImage())
@@ -94,7 +94,7 @@ import java.util.List;
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
-                        if (row.laptopInfo.getLaptopID().toLowerCase().contains(charString.toLowerCase()) || row.laptopInfo.getSerialNo().contains(charSequence)) {
+                        if (row.getLaptopID().toLowerCase().contains(charString.toLowerCase()) || row.getSerialNo().contains(charSequence)) {
                             filteredList.add(row);
                         }
                     }

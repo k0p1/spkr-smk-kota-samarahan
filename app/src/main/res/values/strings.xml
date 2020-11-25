@@ -10,7 +10,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="action_settings">Settings</string>
-    <string name="toolbar_title">Contacts</string>
+    <string name="toolbar_title">Laptop Check Out Record</string>
     <string name="action_search">Search</string>
-    <string name="search_hint">Type name…</string>
+    <string name="search_hint">Type Laptop ID or Serial Number...</string>
 </resources>

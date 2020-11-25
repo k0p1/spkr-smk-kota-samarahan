@@ -2,6 +2,7 @@ package com.example.spkr;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +13,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 import com.google.zxing.common.StringUtils;
@@ -27,13 +30,14 @@ import java.util.Scanner;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler, CustomDialogFragment.CustomDialogListener {
     private ZXingScannerView mScannerView;
+    public Context context;
     private String stripInfo = "";
     protected LaptopInfo li = new LaptopInfo();
     private DatabaseOp dbop;
-    private DatabaseReference dreff = dbop.getChild("Laptop");
-    private CustomDialog dialog = new CustomDialog();
+    private DatabaseReference dreff = FirebaseDatabase.getInstance().getReference().child("Laptop");
+    private CustomDialogFragment customDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
         mScannerView = new ZXingScannerView(this);
         contentFrame.addView(mScannerView);
+        context = getApplicationContext();
 
     }
 
@@ -63,23 +68,34 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         //once get result do something - db
         if (rawResult.getText() != null) {
             setObjectData(rawResult.getText(), li);
-            if(dreff != null) {
-                //show alert dialog "Record Exist, go to update page"
-            }
-
-            else {
-                //show alert dialog "New record, adding to db"
-            }
+//            if(dreff != null) {
+//                //show alert dialog "Record Exist, go to update page"
+//            }
+//
+//            else {
+//                //show alert dialog "New record, adding to db"
+//            }
 
             Toast.makeText(ScannerActivity.this, "Verifying...",Toast.LENGTH_SHORT).show();
-            dialog.showAlertDialog(R.layout.activity_scanner_result, ScannerActivity.this, "Is the information correct?");
-            Intent intent = new Intent(this, ScannerResult.class);
-            intent.putExtra("laptop_info", li); //return the object li as a serialized object
-            startActivity(intent);
+            //dialog.showAlertDialog(R.layout.activity_scanner_result, this, "Is the information correct?");
+            showMessageDialog("Is the information correct?"+rawResult.getText().trim());
         }
 
         //else
-            showAlertDialog(li); //customise view for invalid qr code?
+            //showAlertDialog(li); //customise view for invalid qr code?
+    }
+
+    public void showMessageDialog(String message) {
+        DialogFragment dialog = CustomDialogFragment.newInstance("Scan Results", message, this);
+        dialog.show(this.getSupportFragmentManager(), "scan_results");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        //mScannerView.resumeCameraPreview(this);
+        Intent intent = new Intent(this, ScannerResult.class);
+        intent.putExtra("laptop_info", li); //return the object li as a serialized object
+        startActivity(intent);
     }
 
     //can move to other activity
@@ -100,7 +116,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             }
         });
         AlertDialog alert = alertDialog.create();
-        alert.setCanceledOnTouchOutgit side(false);
+        alert.setCanceledOnTouchOutside(false);
         alert.show();
     }
 
@@ -121,8 +137,6 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             }
         }
     }
-
-
 
 
 }

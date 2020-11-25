@@ -12,6 +12,7 @@
 
     <ImageView
         android:id="@+id/thumbnail"
+        android:src="@mipmap/image_view"
         android:layout_width="@dimen/thumbnail"
         android:layout_height="@dimen/thumbnail"
         android:layout_centerVertical="true"
