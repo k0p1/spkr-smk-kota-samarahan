@@ -100,7 +100,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             }
         });
         AlertDialog alert = alertDialog.create();
-        alert.setCanceledOnTouchOutgit side(false);
+        alert.setCanceledOnTouchOutside(false);
         alert.show();
     }
 
