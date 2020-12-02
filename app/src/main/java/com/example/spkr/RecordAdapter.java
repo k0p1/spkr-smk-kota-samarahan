@@ -93,7 +93,7 @@ import java.util.List;
                     for (LaptopCheckOutInfo  row : laptopCheckOutInfoList) {
 
                         // name match condition. this might differ depending on your requirement
-                        // here we are looking for name or phone number match
+                        // here we are looking for laptop id or serial number match
                         if (row.getLaptopID().toLowerCase().contains(charString.toLowerCase()) || row.getSerialNo().contains(charSequence)) {
                             filteredList.add(row);
                         }

@@ -47,6 +47,7 @@ public class CustomDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 if(mListener != null) {
                     mListener.onDialogPositiveClick(CustomDialogFragment.this);
+                    Toast.makeText(getContext(),"Redirecting...",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -54,12 +55,12 @@ public class CustomDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    public void showAlertDialog(int layout, Activity context, String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context.getApplicationContext());
+    public Dialog showAlertDialog(int layout, Activity context, String message) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
         //create a new layout xml for individual dialog
-        LayoutInflater layoutInflater = LayoutInflater.from(context.getApplicationContext());
-        final View customLayout = layoutInflater.inflate(layout, null);
-        alertDialog.setView(customLayout);
+        //=LayoutInflater layoutInflater = LayoutInflater.from(context.getApplicationContext());
+        //final View customLayout = layoutInflater.inflate(layout, null);
+        //alertDialog.setView(customLayout);
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -79,7 +80,8 @@ public class CustomDialogFragment extends DialogFragment {
             }
         });
 
-        AlertDialog alert = alertDialog.create();
-        alert.show();
+        //AlertDialog alert = alertDialog.create();
+        //alert.show();
+        return alertDialog.create();
     }
 }

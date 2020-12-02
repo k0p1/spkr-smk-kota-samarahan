@@ -35,7 +35,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     public Context context;
     private String stripInfo = "";
     protected LaptopInfo li = new LaptopInfo();
-    private DatabaseOp dbop;
+    private DatabaseOp dbop = new DatabaseOp();
     private DatabaseReference dreff = FirebaseDatabase.getInstance().getReference().child("Laptop");
     private CustomDialogFragment customDialog;
 
@@ -65,24 +65,31 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     @Override
     public void handleResult(Result rawResult) {
+        Toast.makeText(ScannerActivity.this, "Verifying...",Toast.LENGTH_SHORT).show();
+        //spinning loader
+
         //once get result do something - db
         if (rawResult.getText() != null) {
+            showMessageDialog("Is the information/format correct?" + rawResult.getText().trim());
             setObjectData(rawResult.getText(), li);
-//            if(dreff != null) {
-//                //show alert dialog "Record Exist, go to update page"
-//            }
-//
-//            else {
-//                //show alert dialog "New record, adding to db"
-//            }
 
-            Toast.makeText(ScannerActivity.this, "Verifying...",Toast.LENGTH_SHORT).show();
-            //dialog.showAlertDialog(R.layout.activity_scanner_result, this, "Is the information correct?");
-            showMessageDialog("Is the information correct?"+rawResult.getText().trim());
+
+            if (dbop.isLaptopExist(li.getSerialNo())) {
+                showAlertDialog(li.getSerialNo());
+                //show exist dialog?
+                //back main page?
+                this.finish();
+            }
+            //customDialog.showAlertDialog(R.layout.activity_scanner_result, this, "Is the information correct?");
+
+            else {
+                Toast.makeText(ScannerActivity.this, "Record not exist, redirecting to add laptop...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ScannerActivity.this, ScannerResult.class);
+                intent.putExtra("laptop_info", li); //return the object li as a serialized object
+                this.finish();
+                startActivity(intent);
+            }
         }
-
-        //else
-            //showAlertDialog(li); //customise view for invalid qr code?
     }
 
     public void showMessageDialog(String message) {
@@ -93,26 +100,33 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         //mScannerView.resumeCameraPreview(this);
-        Intent intent = new Intent(this, ScannerResult.class);
-        intent.putExtra("laptop_info", li); //return the object li as a serialized object
-        startActivity(intent);
+//        Intent intent = new Intent(this, ScannerResult.class);
+//        intent.putExtra("laptop_info", li); //return the object li as a serialized object
+//        startActivity(intent);
+        Toast.makeText(ScannerActivity.this, "Dialog Click OK...", Toast.LENGTH_LONG).show();
     }
 
+    public void testAlertDialog(String message) {
+        DialogFragment dialogFragment = CustomDialogFragment.newInstance("Testing", message, this);
+
+
+    }
     //can move to other activity
-    private void showAlertDialog(final LaptopInfo li) {
+    private void showAlertDialog(String key) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         //create a new layout xml for this?
-        final View customLayout = getLayoutInflater().inflate(R.layout.activity_scanner_result, null);
-        alertDialog.setView(customLayout);
+        //final View customLayout = getLayoutInflater().inflate(R.layout.activity_scanner_result, null);
+        //alertDialog.setView(customLayout);
+        alertDialog.setTitle("Alert Dialog - Duplicate Check").setMessage("Oh No!! Record "+key+" is found in database..");
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // send data from the AlertDialog to the Activity
                 //EditText editText = customLayout.findViewById(R.id.edit_studentName);
                 Toast.makeText(ScannerActivity.this,"Redirecting...",Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(ScannerActivity.this, ScannerResult.class);
-                intent.putExtra("laptop_info", li); //return the object li as a serialized object
-                startActivity(intent);
+//                Intent intent = new Intent(ScannerActivity.this, ScannerResult.class);
+//                intent.putExtra("laptop_info", li); //return the object li as a serialized object
+//                startActivity(intent);
             }
         });
         AlertDialog alert = alertDialog.create();
@@ -137,6 +151,4 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             }
         }
     }
-
-
 }

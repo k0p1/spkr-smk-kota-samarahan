@@ -13,20 +13,26 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class DatabaseOp extends AppCompatActivity {
 
-    private DatabaseReference dreff = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference dreff;
+    public DatabaseOp () {
+        this.dreff = FirebaseDatabase.getInstance().getReference();
+    }
+    //private DatabaseReference dreff = FirebaseDatabase.getInstance().getReference();
 
     public DatabaseReference getChild (String table) {
         return dreff.child(table);
     }
 
-    public void insertRecord (String table, Class obj, String key, Context appContext) {
+    public void insertLaptopInfo (String table, String key, Context appContext, LaptopInfo obj) {
         dreff.child(table).child(key).setValue(obj).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                //hide spinner
                 Toast.makeText(appContext, "Record added successfully!",Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -37,6 +43,42 @@ public class DatabaseOp extends AppCompatActivity {
         });
     }
 
+    public void insertLaptopRecord (String table, String key, Context appContext, LaptopCheckOutInfo obj) {
+        dreff.child(table).child(key).setValue(obj).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                //hide spinner
+                Toast.makeText(appContext, "Record added successfully!",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(appContext, "Failed to add record...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public boolean isLaptopExist (String key) {
+        final boolean[] exist = {false};
+        Query existRecord = FirebaseDatabase.getInstance().getReference().child("Laptop");
+        existRecord.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    if (postSnapshot.hasChild(key)) {
+                        exist[0] = true;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                exist[0] = false;
+            }
+        });
+
+        return exist[0];
+    }
 //    public boolean checkIfDataExist (Class clss, String value, DatabaseReference dreff) {
 //            boolean resp = false;
 //            dreff.equalTo(li.getSerialNo()).addListenerForSingleValueEvent(new ValueEventListener() {

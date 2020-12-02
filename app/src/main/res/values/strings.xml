@@ -13,4 +13,9 @@
     <string name="toolbar_title">Laptop Check Out Record</string>
     <string name="action_search">Search</string>
     <string name="search_hint">Type Laptop ID or Serial Number...</string>
+    <string-array name="laptop_statuses">
+        <item>Vacant</item>
+        <item>Checked Out</item>
+        <item>Defective</item>
+    </string-array>
 </resources>

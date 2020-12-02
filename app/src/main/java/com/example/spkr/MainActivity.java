@@ -8,13 +8,22 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button clickMe, scanner, viewRecord;
+    private ProgressBar progressBar;
+    private Button clickMe, scanner, viewRecord, test;
+    private EditText editText;
     private static final int ZXING_CAMERA_PERMISSION = 1;
     private Class<?> mClss;
 
@@ -23,9 +32,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
         clickMe = (Button) findViewById(R.id.btn_clickMe);
         scanner = (Button) findViewById(R.id.btn_scanner);
         viewRecord = (Button) findViewById(R.id.btn_viewRecord);
+        test = (Button) findViewById(R.id.btn_test);
+        editText = (EditText) findViewById(R.id.edit_test);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().isEmpty()) {
+                    editText.setError("This field cannot be blank");
+                }
+                else {
+                    editText.setError(null);
+                }
+
+                if (!validate(s.toString())) {
+                    editText.setError("NO NUMBERS ALLOW");
+                }
+                else {
+                    editText.setError("REGEX FAILED");
+                }
+            }
+        });
+
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view){
+                if (editText.getText().toString().matches("[0-9]")) {
+                    Toast.makeText(MainActivity.this, "Contains "+editText.getText().toString(), Toast.LENGTH_LONG).show();
+                }
+
+                else if (editText.getText().toString().matches("[A-Z]")) {
+                    editText.setError("Should not consist A-Z");
+                }
+            }
+        });
 
         clickMe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +105,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private boolean validate (String text) {
+        Pattern p = Pattern.compile("\\d*");
+        Matcher m = p.matcher(text);
+        return m.matches();
+    }
     public void launchScanner() {
         launchActivity(ScannerActivity.class);
     }

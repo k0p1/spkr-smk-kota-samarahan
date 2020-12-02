@@ -2,13 +2,14 @@ package com.example.spkr;
 
 import java.io.Serializable;
 
-public class LaptopInfo extends LaptopCheckOutInfo implements Serializable, DAO {
+public class LaptopInfo implements Serializable, DAO {
 
     private String serialNo =  "testingLaptopInfo";
     private String registrationNo = "LaptopInfo";
     private String laptopID = "1234LaptopInfo";
     private String status;
 
+    public LaptopInfo () {};
     public String getLaptopID() {
         return laptopID;
     }

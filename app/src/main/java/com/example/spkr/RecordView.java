@@ -2,15 +2,20 @@ package com.example.spkr;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -18,11 +23,15 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +44,7 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
     private SearchView searchView;
     private DatabaseOp dbop = new DatabaseOp();
     private DatabaseReference dreff = dbop.getChild("Laptop");
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +129,15 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
 
     @Override
     public void onRecordSelected(LaptopCheckOutInfo checkOutInfo) {
+        //inflate a detailed record view or go to the result page??
         Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getSerialNo() + ", " + checkOutInfo.getLaptopID(), Toast.LENGTH_LONG).show();
+//        setContentView(R.layout.activity_scanner_result);
+//        getLayoutInflater().inflate(R.layout.laptop_record_details, null);
+
+        Intent intent = new Intent(this, ScannerResult.class);
+        intent.putExtra("laptop_record_info", checkOutInfo);
+        this.onPause();
+        startActivity(intent);
     }
 
     @Override
@@ -189,9 +207,10 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
         if (id == R.id.action_search) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    public void initDetailPage(LaptopCheckOutInfo laptopCheckOutInfo) {
 
+    }
 }
