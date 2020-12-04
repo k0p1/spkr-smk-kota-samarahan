@@ -33,12 +33,12 @@ public class DatabaseOp extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 //hide spinner
-                Toast.makeText(appContext, "Record added successfully!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(appContext, "Laptop Info added successfully!",Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(appContext, "Failed to add record...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(appContext, "Failed to add laptop info...", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -48,12 +48,12 @@ public class DatabaseOp extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 //hide spinner
-                Toast.makeText(appContext, "Record added successfully!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(appContext, "Laptop Record added successfully!",Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(appContext, "Failed to add record...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(appContext, "Failed to add laptop record...", Toast.LENGTH_SHORT).show();
             }
         });
     }

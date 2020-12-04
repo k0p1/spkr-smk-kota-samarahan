@@ -43,7 +43,7 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
     private RecordAdapter mAdapter;
     private SearchView searchView;
     private DatabaseOp dbop = new DatabaseOp();
-    private DatabaseReference dreff = dbop.getChild("Laptop");
+    private DatabaseReference dreff = dbop.getChild("Laptop Record");
     private ProgressBar progressBar;
 
     @Override
@@ -74,8 +74,8 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
     }
 
     private void fetchRecords() {
-        dreff.addValueEventListener(new ValueEventListener() {
-
+        Query query = dreff;
+        query.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 recordList.clear();
@@ -93,6 +93,26 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
 
             }
         });
+
+//        dreff.addValueEventListener(new ValueEventListener() {
+//
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                recordList.clear();
+//
+//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+//                    LaptopCheckOutInfo recordRow = postSnapshot.getValue(LaptopCheckOutInfo.class);
+//                    recordList.add(recordRow);
+//                }
+//
+//                mAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
     //change the method to retrieve via firebase
 //    private void fetchRecords() {
@@ -130,7 +150,7 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
     @Override
     public void onRecordSelected(LaptopCheckOutInfo checkOutInfo) {
         //inflate a detailed record view or go to the result page??
-        Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getSerialNo() + ", " + checkOutInfo.getLaptopID(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getSerialNo() + ", " + checkOutInfo.getLaptopID(), Toast.LENGTH_SHORT).show();
 //        setContentView(R.layout.activity_scanner_result);
 //        getLayoutInflater().inflate(R.layout.laptop_record_details, null);
 

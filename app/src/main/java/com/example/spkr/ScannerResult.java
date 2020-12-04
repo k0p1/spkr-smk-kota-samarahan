@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -54,8 +55,8 @@ public class ScannerResult extends AppCompatActivity {
     private StudentInfo studentInfo;
     private LaptopCheckOutInfo laptopCheckOutInfo;
     private DatabaseOp dbop;
-    private DatabaseReference dreff;
-    private Boolean newRecord;
+    private DatabaseReference dreff, dreff2;
+    private Boolean newRecord, save;
     final private String errBlank = "This field cannot be blank";
     final private String regexSerial = "^[A-Z0-9 ]"; //Any word character, short for [a-zA-Z_0-9]
     final private String errSymbol = "This field should not contain symbols and special characters!";
@@ -65,7 +66,6 @@ public class ScannerResult extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laptop_record_details);
 
-        status = (Spinner) findViewById(R.id.sp_statusDropdown);
         btn_save = (Button) findViewById(R.id.btn_save);
         btn_edit = (Button) findViewById(R.id.btn_edit);
 
@@ -98,25 +98,31 @@ public class ScannerResult extends AppCompatActivity {
 
         dbop = new DatabaseOp();
         dreff = FirebaseDatabase.getInstance().getReference().child("Laptop");
+        dreff2 = FirebaseDatabase.getInstance().getReference().child("Laptop Record");
 
         //click save button
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
                 try {
-                    Toast.makeText(ScannerResult.this, "Saving...",Toast.LENGTH_SHORT).show();
-                    //load spinner
+                    showSaveConfirmationDialog();
+                    //ok button clicked on confirmation
+                    if (true) {
+                        Toast.makeText(ScannerResult.this, "Saving...",Toast.LENGTH_SHORT).show();
+                        //load spinner
 
-                    //set condition, if student name == null || date != null, save record, else just laptop?
-                    if (newRecord) {
-                        dbop.insertLaptopInfo("Laptop", li.getSerialNo(),ScannerResult.this, li);
-                        showSuccessDialog(li.getSerialNo());
-                    }
+                        //set condition, if student name == null || date != null, save record, else just laptop?
+                        if (newRecord) {
+                            presetData(li);
+                            dbop.insertLaptopInfo("Laptop", li.getSerialNo(),ScannerResult.this, li);
+                            showSuccessDialog(li.getSerialNo());
+                        }
 
-                    else {
-                        dbop.insertLaptopRecord("Laptop Record", laptopCheckOutInfo.getSerialNo(),ScannerResult.this, laptopCheckOutInfo);
-                        showSuccessDialog(laptopCheckOutInfo.getSerialNo());
-                    }
+                        else {
+                            presetData(laptopCheckOutInfo);
+                            dbop.insertLaptopRecord("Laptop Record", laptopCheckOutInfo.getSerialNo(),ScannerResult.this, laptopCheckOutInfo);
+                            showSuccessDialog(laptopCheckOutInfo.getSerialNo());
+                        }
 
 
 //                    Intent intent = new Intent(ScannerResult.this, MainActivity.class);
@@ -136,6 +142,11 @@ public class ScannerResult extends AppCompatActivity {
 //                            //show a dialog?
 //                        }
 //                    });
+                    }
+                    //cancel button clicked on confirmation
+                    else {
+
+                    }
 
                 } catch (Exception e) {
                     Toast.makeText(ScannerResult.this, "Exception occurred: "+e.getMessage(),Toast.LENGTH_LONG).show();
@@ -151,6 +162,11 @@ public class ScannerResult extends AppCompatActivity {
                     enableEditAll();
                     dateClickListener(checkoutDate, returnDate);
                     numberInputHandling(laptopID, errSymbol);
+                    numberInputHandling(studentIC, errSymbol);
+                    stringInputHandling(serialNo, errSymbol);
+                    stringInputHandling(regNo, errSymbol);
+                    stringInputHandling(studentName, errSymbol);
+                    stringInputHandling(studentClass, errSymbol);
 
 //                    serialNo.addTextChangedListener(new TextWatcher() {
 //                        @Override
@@ -199,6 +215,7 @@ public class ScannerResult extends AppCompatActivity {
         disableEdit(studentIC);
         disableEdit(checkoutDate);
         disableEdit(returnDate);
+        status.setEnabled(false);
         status.setClickable(false);
     }
 
@@ -241,6 +258,39 @@ public class ScannerResult extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        AlertDialog alert = alertDialog.create();
+        alert.setCanceledOnTouchOutside(false);
+        alert.show();
+    }
+
+    private void showSaveConfirmationDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        //create a new layout xml for this?
+        //final View customLayout = getLayoutInflater().inflate(R.layout.activity_scanner_result, null);
+        //alertDialog.setView(customLayout);
+        alertDialog.setTitle("Are you sure?").setMessage("Do you want to update save the changes to this record?");
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //link to save button? continue from there?
+                save = true;
+                // send data from the AlertDialog to the Activity
+//                //EditText editText = customLayout.findViewById(R.id.edit_studentName);
+//                Toast.makeText(ScannerResult.this,"Back to home page...",Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(ScannerResult.this,  MainActivity.class);
+//                intent.putExtra("laptop_info", li); //return the object li as a serialized object
+//                startActivity(intent);
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing
+                save = false;
+            }
+        });
+
         AlertDialog alert = alertDialog.create();
         alert.setCanceledOnTouchOutside(false);
         alert.show();
@@ -322,11 +372,17 @@ public class ScannerResult extends AppCompatActivity {
         studentName.setText(laptopCheckOutInfo.getStudentName());
         studentClass.setText(laptopCheckOutInfo.getStudentClass());
         studentIC.setText(laptopCheckOutInfo.getStudentIC());
-        if (!laptopCheckOutInfo.getCheckoutDate().isEmpty()) {
+        checkoutDate.setText(laptopCheckOutInfo.getCheckoutDate());
+        initDropdown(status, laptopCheckOutInfo.getStatus());
+    }
 
+    private void initDropdown (Spinner dropdown, String selection) {
+        for (int i = 0; i < dropdown.getCount(); i++) {
+            if(dropdown.getItemAtPosition(i).toString().equalsIgnoreCase(selection)) {
+                dropdown.setSelection(i);
+                break;
+            }
         }
-
-        status.setSelection(0);
     }
 
     public void dateClickListener (EditText checkout, EditText ret) throws ParseException {
@@ -344,7 +400,7 @@ public class ScannerResult extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         //validation
-                        checkout.setText(new StringBuilder().append(dayOfMonth).append("-").append(month).append("-").append(year).toString());
+                        checkout.setText(new StringBuilder().append(dayOfMonth).append("-").append(month+1).append("-").append(year).toString());
                     }
                 }, year, month, day);
                 datePicker.create();
@@ -366,7 +422,7 @@ public class ScannerResult extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         //validation
-                        ret.setText(new StringBuilder().append(dayOfMonth).append("-").append(month).append("-").append(year).toString());
+                        ret.setText(new StringBuilder().append(dayOfMonth).append("-").append(month+1).append("-").append(year).toString());
                     }
                 }, year, month, day);
                 datePicker.create();
@@ -412,5 +468,29 @@ public class ScannerResult extends AppCompatActivity {
         Pattern p = Pattern.compile("[\\w\\d\\s]*"); //all character a-zA-Z0-9 ?
         Matcher m = p.matcher(text);
         return m.matches();
+    }
+
+    private void presetData(LaptopCheckOutInfo laptopCheckOutInfo) {
+        laptopCheckOutInfo.setSerialNo(serialNo.getText().toString().trim());
+        laptopCheckOutInfo.setLaptopID(laptopID.getText().toString().trim());
+        laptopCheckOutInfo.setRegistrationNo(regNo.getText().toString().trim());
+        laptopCheckOutInfo.setStudentName(studentName.getText().toString().trim());
+        laptopCheckOutInfo.setStudentClass(studentClass.getText().toString().trim());
+        laptopCheckOutInfo.setStudentIC(studentIC.getText().toString().trim());
+        laptopCheckOutInfo.setCheckoutDate(checkoutDate.getText().toString().trim());
+        laptopCheckOutInfo.setReturnDate(returnDate.getText().toString().trim());
+        laptopCheckOutInfo.setStatus(status.getSelectedItem().toString().trim());
+//        status.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            }
+//        });
+    }
+
+    private void presetData(LaptopInfo laptopInfo) {
+        laptopInfo.setSerialNo(serialNo.getText().toString().trim());
+        laptopInfo.setLaptopID(laptopID.getText().toString().trim());
+        laptopInfo.setRegistrationNo(regNo.getText().toString().trim());
+        laptopInfo.setStatus(status.getSelectedItem().toString().trim());
     }
 }
