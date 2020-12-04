@@ -115,13 +115,13 @@ public class ScannerResult extends AppCompatActivity {
                         if (newRecord) {
                             presetData(li);
                             dbop.insertLaptopInfo("Laptop", li.getSerialNo(),ScannerResult.this, li);
-                            showSuccessDialog(li.getSerialNo());
+                            showSuccessDialog(li.getSerialNo(), "added");
                         }
 
                         else {
                             presetData(laptopCheckOutInfo);
                             dbop.insertLaptopRecord("Laptop Record", laptopCheckOutInfo.getSerialNo(),ScannerResult.this, laptopCheckOutInfo);
-                            showSuccessDialog(laptopCheckOutInfo.getSerialNo());
+                            showSuccessDialog(laptopCheckOutInfo.getSerialNo(), "updated");
                         }
 
 
@@ -241,12 +241,12 @@ public class ScannerResult extends AppCompatActivity {
         editText.setTextIsSelectable(true);
     }
 
-    private void showSuccessDialog(String key) {
+    private void showSuccessDialog(String key, String op) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         //create a new layout xml for this?
         //final View customLayout = getLayoutInflater().inflate(R.layout.activity_scanner_result, null);
         //alertDialog.setView(customLayout);
-        alertDialog.setTitle("Record Status").setMessage("Record "+key+" is added successfully!");
+        alertDialog.setTitle("Record Status").setMessage("Record "+key+" is "+op+" successfully!");
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -254,7 +254,6 @@ public class ScannerResult extends AppCompatActivity {
                 //EditText editText = customLayout.findViewById(R.id.edit_studentName);
                 Toast.makeText(ScannerResult.this,"Back to home page...",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ScannerResult.this,  MainActivity.class);
-//                intent.putExtra("laptop_info", li); //return the object li as a serialized object
                 startActivity(intent);
             }
         });
