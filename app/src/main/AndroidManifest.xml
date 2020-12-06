@@ -5,11 +5,14 @@
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
 
@@ -42,7 +45,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"  />
             </intent-filter>
+        </activity>
 
+        <activity android:name=".SummaryActivity"
+            android:label="Summary View"
+            android:theme="@style/AppOverlayTheme"
+            android:parentActivityName=".MainActivity">
+
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.CREATE_DOCUMENT "/>-->
+<!--            </intent-filter>-->
         </activity>
 
     </application>

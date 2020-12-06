@@ -16,7 +16,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -50,12 +50,8 @@ dependencies {
     // For control over item selection of both touch and mouse driven selection
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
 
-    // glide image library
-    implementation 'com.github.bumptech.glide:glide:4.3.1'
-
-    // volley http library
-    implementation 'com.android.volley:volley:1.1.0'
-    implementation 'com.google.code.gson:gson:2.6.2'
-
+    implementation "org.apache.poi:poi:3.17"	     // For `.xls` files
+    implementation "org.apache.poi:poi-ooxml:3.17"	 // For `.xlsx` files
+    implementation 'com.fasterxml:aalto-xml:1.0.0'
 }
 

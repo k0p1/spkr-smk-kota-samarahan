@@ -1,7 +1,6 @@
 package com.example.spkr;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
