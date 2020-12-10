@@ -49,8 +49,9 @@ public class SummaryActivity extends AppCompatActivity {
     private Button btn_export;
     private EditText laptopCount, recordCount;
     private ProgressBar loadingBar;
+    private List<LaptopInfo> laptopInfoList = new ArrayList<>();
     private List<LaptopCheckOutInfo> laptopCheckOutInfoList = new ArrayList<>();
-    private DatabaseReference dreff;
+    private DatabaseReference dreff, dreff1;
     private String [] headerColumns = {"Serial No.", "Reg No.", "Laptop ID", "Student Name", "Student Class", "Student IC", "Checkout Date", "Return Date", "Status"};
 
 
@@ -65,19 +66,25 @@ public class SummaryActivity extends AppCompatActivity {
         loadingBar = (ProgressBar) findViewById(R.id.progressBar_export);
         loadingBar.setVisibility(View.INVISIBLE);
 
+        laptopCount.setClickable(false);
+        recordCount.setClickable(false);
+
         dreff = FirebaseDatabase.getInstance().getReference().child("Laptop Record");
+        dreff1 = FirebaseDatabase.getInstance().getReference().child("Laptop");
 
         fileName = new StringBuilder().append("Report_").append(year).append(".xlsx").toString(); //Name of the file
 
 
         initLaptopRecordList();
-
+        initLaptopList();
 
         btn_export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadingBar.setVisibility(View.VISIBLE);
                 //setSize(laptopCheckOutInfoList);
                 try {
+                    createFolder();
                     createWorkbook();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -92,16 +99,11 @@ public class SummaryActivity extends AppCompatActivity {
     public void createFolder () {
         File reports = new File("/storage/emulated/0/SPKR", folderName);
         if (reports.isDirectory()) {
-            recordCount.setText(String.valueOf(reports.exists()));
         }
         else {
             if (reports.mkdirs()) {
-                recordCount.setText(String.valueOf(reports.exists()));
             }
         }
-
-
-        laptopCount.setText(reports.toString());
     }
 
     public void createWorkbook () throws IOException {
@@ -165,9 +167,7 @@ public class SummaryActivity extends AppCompatActivity {
 
     public void showProgressBar (List list) {
         for(int i=1; i<=loadingBar.getMax(); i++){
-            loadingBar.setVisibility(View.VISIBLE);
             loadingBar.setProgress(i);
-
         }
 
         if(loadingBar.getProgress() == 100) {
@@ -177,12 +177,12 @@ public class SummaryActivity extends AppCompatActivity {
         }
     }
 
-    public void setSize(List list){
+    public void setSize(List list, EditText editText){
         if(list.isEmpty())
-            recordCount.setText("0");
+            editText.setText("No record found");
 
         else {
-            recordCount.setText(String.valueOf(list.size()));
+            editText.setText(String.valueOf(list.size()));
         }
     }
 
@@ -217,8 +217,32 @@ public class SummaryActivity extends AppCompatActivity {
                     laptopCheckOutInfoList.add(recordRow);
                 }
 
-                setSize(laptopCheckOutInfoList);
+                setSize(laptopCheckOutInfoList, recordCount);
                 loadingBar.setMax(laptopCheckOutInfoList.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void initLaptopList () {
+        Query query = this.dreff1;
+        query.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!laptopInfoList.isEmpty()) {
+                    laptopInfoList.clear();
+                }
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    LaptopInfo recordRow = postSnapshot.getValue(LaptopInfo.class);
+                    laptopInfoList.add(recordRow);
+                }
+
+                setSize(laptopInfoList, laptopCount);
             }
 
             @Override

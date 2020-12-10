@@ -31,7 +31,7 @@ import java.util.List;
 
 public class RecordView extends AppCompatActivity implements RecordAdapter.RecordAdapterListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = Home.class.getSimpleName();
     private RecyclerView recyclerView;
     private List<LaptopCheckOutInfo> recordList;
     private RecordAdapter mAdapter;

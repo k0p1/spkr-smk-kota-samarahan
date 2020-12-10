@@ -243,7 +243,7 @@ public class ScannerResult extends AppCompatActivity {
                 // send data from the AlertDialog to the Activity
                 //EditText editText = customLayout.findViewById(R.id.edit_studentName);
                 Toast.makeText(ScannerResult.this,"Back to home page...",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ScannerResult.this,  MainActivity.class);
+                Intent intent = new Intent(ScannerResult.this,  Home.class);
                 startActivity(intent);
             }
         });

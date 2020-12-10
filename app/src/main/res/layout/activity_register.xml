@@ -4,49 +4,68 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login"
     android:background="@drawable/pagelogin">
 
     <ImageView
-        android:id="@+id/loginlogo"
+        android:id="@+id/registerlogo"
         android:layout_width="300dp"
         android:layout_height="125dp"
         android:src="@drawable/logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="50dp"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="LOG IN"
+        android:text="REGISTRATION"
         android:gravity="center"
-        android:layout_below="@+id/loginlogo"
+        android:layout_below="@+id/registerlogo"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="20sp"
         android:textStyle="bold" />
 
 
+
     <EditText
-        android:id="@+id/login_phone_number_input"
+        android:id="@+id/register_usernameinput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginRight="15dp"
+        android:layout_below="@+id/registerlogo"
         android:background="@drawable/input_design"
-        android:hint="Phone Number"
-        android:inputType="number"
         android:padding="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:hint="Name"
+        android:inputType="text"
         android:textColor="@color/colorPrimaryDark"
         android:textColorHint="@color/colorPrimaryDark"
         android:textSize="19sp"
-        tools:ignore="UnknownId" />
+        />
 
     <EditText
-        android:id="@+id/login_passwordinput"
+        android:id="@+id/register_phonenumberinput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_phone_number_input"
+        android:layout_below="@+id/register_usernameinput"
+        android:background="@drawable/input_design"
+        android:padding="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:hint="Phone Number"
+        android:inputType="number"
+        android:textColor="@color/colorPrimaryDark"
+        android:textColorHint="@color/colorPrimaryDark"
+        android:textSize="19sp"
+        android:layout_marginTop="6dp"
+        />
+
+
+    <EditText
+        android:id="@+id/register_passwordinput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register_phonenumberinput"
         android:background="@drawable/input_design"
         android:padding="20dp"
         android:layout_marginLeft="15dp"
@@ -59,44 +78,12 @@
         android:textSize="19sp"
         />
 
-    <LinearLayout
-        android:id="@+id/linear_layout_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/login_passwordinput"
-        android:layout_marginTop="5dp"
-        >
-
-        <CheckBox
-            android:id="@+id/remember_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Remember me"
-            android:textColor="@color/colorPrimaryDark"
-            android:gravity="center_vertical"
-            android:textSize="18sp"
-            android:layout_marginLeft="17dp"
-            />
-
-        <TextView
-            android:id="@+id/forget_password_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Forget Password?"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="19sp"
-            android:layout_marginLeft="70dp"
-            />
-
-    </LinearLayout>
-
 
     <Button
-        android:id="@+id/login_btn"
+        android:id="@+id/register_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_layout_1"
+        android:layout_below="@+id/register_passwordinput"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
@@ -104,9 +91,8 @@
         android:padding="17dp"
         android:textAllCaps="false"
         android:textSize="18sp"
-        android:text="Login"
+        android:text="Create Account"
         android:textColor="@color/colorBlack"
         />
-
 
 </RelativeLayout>

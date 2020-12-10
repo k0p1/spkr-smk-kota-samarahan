@@ -15,4 +15,27 @@
     <color name="divider">#B6B6B6</color>
     <color name="contact_name">#333333</color>
     <color name="contact_number">#8c8c8c</color>
+
+    <color name="btnsignin">#C70040</color>
+
+    <color name="colorbg">#F5F1F2</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorGrapeFruit">#ED5565</color>
+    <color name="colorGrapeFruitDark">#DA4453</color>
+    <color name="colorBitterSweet">#FC6E51</color>
+    <color name="colorBitterSweetDark">#E9573F</color>
+    <color name="colorFlower">#FFCE54</color>
+    <color name="colorGrass">#A0D468</color>
+    <color name="colorGrassDark">#8CC152</color>
+    <color name="colorBlueJeans">#509CEC</color>
+    <color name="colorBlueJeansDark">#4A89DC</color>
+    <color name="colorLavander">#AC92EC</color>
+    <color name="colorAquaDark">#3BAFDA</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="colorButton">#ECF0F1  </color>
+    <color name="colorBrown">#FCEEC5 </color>
+    <color name="colorBrownDark">#F1C470</color>
+    <color name="dialog_header_color">#c5c5c5</color>
+    <color name="dialog_text_color">#464646</color>
 </resources>
