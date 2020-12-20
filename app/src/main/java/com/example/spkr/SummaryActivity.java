@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,8 +47,8 @@ public class SummaryActivity extends AppCompatActivity {
     private String folderName = "Reports";
     private String fileName = "";
     private String rootPath = "";
-    private Button btn_export;
-    private EditText laptopCount, recordCount;
+    private Button btn_export, btn_open;
+    private EditText laptopCount, recordCount, logdebug;
     private ProgressBar loadingBar;
     private List<LaptopInfo> laptopInfoList = new ArrayList<>();
     private List<LaptopCheckOutInfo> laptopCheckOutInfoList = new ArrayList<>();
@@ -61,6 +62,8 @@ public class SummaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_summary);
 
         btn_export = (Button) findViewById(R.id.btn_export);
+        btn_open = (Button) findViewById(R.id.btn_openFile);
+        logdebug = (EditText) findViewById(R.id.edit_debugging_log);
         laptopCount = (EditText) findViewById(R.id.edit_laptopCount);
         recordCount = (EditText) findViewById(R.id.edit_recordCount);
         loadingBar = (ProgressBar) findViewById(R.id.progressBar_export);
@@ -78,12 +81,15 @@ public class SummaryActivity extends AppCompatActivity {
         initLaptopRecordList();
         initLaptopList();
 
+        logdebug.setText("getApplicationContext().getExternalFilesDir(): "+getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString());
+
         btn_export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadingBar.setVisibility(View.VISIBLE);
                 //setSize(laptopCheckOutInfoList);
                 try {
+
                     createFolder();
                     createWorkbook();
                 } catch (IOException e) {
@@ -94,16 +100,29 @@ public class SummaryActivity extends AppCompatActivity {
                 //openFileManager();
             }
         });
+
+        btn_open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileManager();
+            }
+        });
     }
 
     public void createFolder () {
-        File reports = new File("/storage/emulated/0/SPKR", folderName);
+        String temp = Uri.parse(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()).toString();
+        File reports = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName);
         if (reports.isDirectory()) {
+            logdebug.append("\nSPKR isDirectory(): "+reports.isDirectory());
         }
         else {
             if (reports.mkdirs()) {
+                logdebug.append("\nSPKR mkDirs(): "+reports.mkdirs());
             }
         }
+
+        this.rootPath = reports.getPath();
+        logdebug.append("\nrootPath: "+rootPath+"\n canWrite(): "+getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).canWrite());
     }
 
     public void createWorkbook () throws IOException {
@@ -150,11 +169,15 @@ public class SummaryActivity extends AppCompatActivity {
         showProgressBar(laptopCheckOutInfoList);
 
         //create the file to be written
-        File excel = new File("/storage/emulated/0/SPKR/"+folderName+"/"+fileName);
+        //File excel = new File("/storage/emulated/0/SPKR/"+folderName+"/"+fileName);
+        File excel = new File(rootPath+"/"+fileName);
         if (!excel.exists()) {
             if (excel.createNewFile()){
                 Toast.makeText(this, "File not found, creating new one...", Toast.LENGTH_LONG).show();
-                laptopCount.setText("createNewFile: "+excel.exists()+"\n isReadble: "+excel.canRead()+"\n isWritable: "+excel.canWrite());
+                logdebug.append("\ncreateNewFile: "+excel.createNewFile()+"\n isReadable: "+excel.canRead()+"\n isWritable: "+excel.canWrite());
+            }
+            else {
+                logdebug.append("\nexcelExists: "+excel.exists()+"\n isReadable: "+excel.canRead()+"\n isWritable: "+excel.canWrite());
             }
         }
 
@@ -170,7 +193,7 @@ public class SummaryActivity extends AppCompatActivity {
             loadingBar.setProgress(i);
         }
 
-        if(loadingBar.getProgress() == 100) {
+        if(loadingBar.getProgress() == loadingBar.getMax()) {
             loadingBar.setVisibility(View.INVISIBLE);
             loadingBar.setProgress(0);
             Toast.makeText(this, "Export done(hopefully)", Toast.LENGTH_SHORT).show();
@@ -187,21 +210,41 @@ public class SummaryActivity extends AppCompatActivity {
     }
 
     public void openFileManager(){
-        Uri uri = Uri.parse(Environment.getExternalStorageDirectory().toString());
-        startActivity(new Intent(Intent.ACTION_GET_CONTENT).setDataAndType(uri, "*/*"));
+        Uri uri = Uri.parse(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString());
+        //startActivity(new Intent(Intent.ACTION_GET_CONTENT).setDataAndType(uri, "*/*"));
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
+        startActivityForResult(intent, 1);
+
+//        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//        intent.setType("application/xlsx");
+//        intent.putExtra(Intent.EXTRA_TITLE, fileName);
+//
+//
+//        Uri uri =  Uri.parse(getApplicationContext().getFilesDir().toString());
+//        Uri.Builder builder = new Uri.Builder();
+//        builder.appendPath(uri.toString()).appendPath(fileName);
+//
+//        // Optionally, specify a URI for the directory that should be opened in
+//        // the system file picker when your app creates the document.
+//        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(getApplicationContext().getFilesDir().toString()));
+//        startActivityForResult(intent, 1);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 100 && (grantResults.length>0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)){
-            exportCheckoutRecord();
-        }
-        else {
-            Toast.makeText(SummaryActivity.this,"Write permission denied", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == 100 && (grantResults.length>0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)){
+//            exportCheckoutRecord();
+//        }
+//        else {
+//            Toast.makeText(SummaryActivity.this,"Write permission denied", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void initLaptopRecordList () {
         Query query = this.dreff;

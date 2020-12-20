@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,6 +54,22 @@ public class DatabaseOp extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(appContext, "Failed to add laptop record...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public void updateLaptopInfo (String table, String key, Context appContext, LaptopInfo obj) {
+        dreff.child(table).child(key).setValue(obj).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                //hide spinner
+                Toast.makeText(appContext, "Laptop Info updated successfully!",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(appContext, "Failed to update laptop info...", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -30,26 +30,24 @@
             <intent-filter>
                 <category android:name="android.intent.category.HOME"/>
             </intent-filter>
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
         </activity>
 
         <!--                  android:theme="@style/AppOverlayTheme"-->
         <activity android:name=".ScannerActivity"
-                  android:label="Scanner">
+                  android:label="Scanner"
+                  android:parentActivityName=".Home">
         </activity>
 
         <!--            android:theme="@style/AppOverlayTheme"-->
         <activity android:name=".ScannerResult"
-                  android:label="Scanner">
+                  android:label="Record Details">
         </activity>
 
-        <!--            android:theme="@style/AppTheme.PopupOverlay"-->
+
         <activity android:name=".RecordView"
                   android:label="Records"
-                  android:parentActivityName="com.example.spkr.Home">
+                  android:theme="@style/AppTheme.PopupOverlay"
+                  android:parentActivityName=".Home">
 
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -63,6 +61,11 @@
         <activity android:name=".SummaryActivity"
                   android:label="Summary View"
                   android:parentActivityName=".Home">
+
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_DOCUMENT"/>
+                <action android:name="android.intent.action.OPEN_DOCUMENT_TREE"/>
+            </intent-filter>
         </activity>
 
         <activity android:name=".AdminLogin">
@@ -73,6 +76,11 @@
         <activity android:name=".ResetPassword" />
         <activity android:name=".Register" />
         <activity android:name=".Login" />
+
+        <activity android:name=".Email_RegisterActivity"
+                  android:parentActivityName=".PageLogin">
+
+        </activity>
 
     </application>
 

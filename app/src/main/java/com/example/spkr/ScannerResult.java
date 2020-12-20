@@ -40,15 +40,12 @@ public class ScannerResult extends AppCompatActivity {
     private Button btn_edit, btn_save;
     private EditText serialNo, regNo, laptopID, studentName, studentIC, studentClass, checkoutDate, returnDate;
     private Toolbar toolbar;
-    private TextInputLayout textInputLayout;
-    private LaptopInfo li;
-    private StudentInfo studentInfo;
+    private LaptopInfo laptopInfo;
     private LaptopCheckOutInfo laptopCheckOutInfo;
     private DatabaseOp dbop;
     private DatabaseReference dreff, dreff2;
     private Boolean newRecord, save;
     final private String errBlank = "This field cannot be blank";
-    final private String regexSerial = "^[A-Z0-9 ]"; //Any word character, short for [a-zA-Z_0-9]
     final private String errSymbol = "This field should not contain symbols and special characters!";
 
     @Override
@@ -72,8 +69,8 @@ public class ScannerResult extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra("laptop_info")) {
-                li = (LaptopInfo) getIntent().getSerializableExtra("laptop_info");
-                initDisplay(li);
+                laptopInfo = (LaptopInfo) getIntent().getSerializableExtra("laptop_info");
+                initDisplay(laptopInfo);
                 this.newRecord = true;
             }
 
@@ -97,20 +94,22 @@ public class ScannerResult extends AppCompatActivity {
                 try {
                     showSaveConfirmationDialog();
                     //ok button clicked on confirmation
-                    if (true) {
+                    if (save) {
                         Toast.makeText(ScannerResult.this, "Saving...",Toast.LENGTH_SHORT).show();
                         //load spinner
 
                         //set condition, if student name == null || date != null, save record, else just laptop?
                         if (newRecord) {
-                            presetData(li);
-                            dbop.insertLaptopInfo("Laptop", li.getSerialNo(),ScannerResult.this, li);
-                            showSuccessDialog(li.getSerialNo(), "added");
+                            presetData(laptopInfo);
+                            dbop.insertLaptopInfo("Laptop", laptopInfo.getSerialNo(), getApplicationContext(), laptopInfo);
+                            showSuccessDialog(laptopInfo.getSerialNo(), "added");
                         }
 
                         else {
                             presetData(laptopCheckOutInfo);
-                            dbop.insertLaptopRecord("Laptop Record", laptopCheckOutInfo.getSerialNo(),ScannerResult.this, laptopCheckOutInfo);
+                            presetData(laptopInfo);
+                            dbop.updateLaptopInfo("Laptop", laptopCheckOutInfo.getSerialNo(), getApplicationContext(), laptopInfo);
+                            dbop.insertLaptopRecord("Laptop Record", laptopCheckOutInfo.getSerialNo(), getApplicationContext(), laptopCheckOutInfo);
                             showSuccessDialog(laptopCheckOutInfo.getSerialNo(), "updated");
                         }
 
@@ -158,36 +157,6 @@ public class ScannerResult extends AppCompatActivity {
                     stringInputHandling(studentName, errSymbol);
                     stringInputHandling(studentClass, errSymbol);
 
-//                    serialNo.addTextChangedListener(new TextWatcher() {
-//                        @Override
-//                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                            serialNo.setAllCaps(true);
-//                        }
-//
-//                        @Override
-//                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                            if (serialNo.getText().toString().contains("")) {
-//                                serialNo.setError("");
-//                            }
-//
-//                            else {
-//                                serialNo.setError(null);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void afterTextChanged(Editable s) {
-//                            if(serialNo.getText().toString().length() <= 0) {
-//                                serialNo.setError("This field cannot be blank");
-//                            }
-//
-//                            else {
-//                                serialNo.setError(null);
-//                            }
-//
-//                        }
-//                    });
-
                 } catch (Exception e) {
                     Toast.makeText(ScannerResult.this, e.getMessage(),Toast.LENGTH_LONG).show();
                 }
@@ -221,8 +190,6 @@ public class ScannerResult extends AppCompatActivity {
         enableEdit(studentName);
         enableEdit(studentClass);
         enableEdit(studentIC);
-//        enableEdit(checkoutDate);
-//        enableEdit(returnDate);
         status.setClickable(true);
     }
 
@@ -240,8 +207,6 @@ public class ScannerResult extends AppCompatActivity {
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // send data from the AlertDialog to the Activity
-                //EditText editText = customLayout.findViewById(R.id.edit_studentName);
                 Toast.makeText(ScannerResult.this,"Back to home page...",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ScannerResult.this,  Home.class);
                 startActivity(intent);
@@ -257,7 +222,7 @@ public class ScannerResult extends AppCompatActivity {
         //create a new layout xml for this?
         //final View customLayout = getLayoutInflater().inflate(R.layout.activity_scanner_result, null);
         //alertDialog.setView(customLayout);
-        alertDialog.setTitle("Are you sure?").setMessage("Do you want to update save the changes to this record?");
+        alertDialog.setTitle("Are you sure?").setMessage("Do you want to save the changes to this record?");
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -469,11 +434,6 @@ public class ScannerResult extends AppCompatActivity {
         laptopCheckOutInfo.setCheckoutDate(checkoutDate.getText().toString().trim());
         laptopCheckOutInfo.setReturnDate(returnDate.getText().toString().trim());
         laptopCheckOutInfo.setStatus(status.getSelectedItem().toString().trim());
-//        status.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//            }
-//        });
     }
 
     private void presetData(LaptopInfo laptopInfo) {

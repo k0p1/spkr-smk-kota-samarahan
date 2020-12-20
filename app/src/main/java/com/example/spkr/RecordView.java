@@ -87,66 +87,12 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
 
             }
         });
-
-//        dreff.addValueEventListener(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                recordList.clear();
-//
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-//                    LaptopCheckOutInfo recordRow = postSnapshot.getValue(LaptopCheckOutInfo.class);
-//                    recordList.add(recordRow);
-//                }
-//
-//                mAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
     }
-    //change the method to retrieve via firebase
-//    private void fetchRecords() {
-//        JsonArrayRequest request = new JsonArrayRequest(URL,
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        if (response == null) {
-//                            Toast.makeText(getApplicationContext(), "Couldn't fetch the contacts! Pleas try again.", Toast.LENGTH_LONG).show();
-//                            return;
-//                        }
-//
-//                        List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
-//                        }.getType());
-//
-//                        // adding contacts to contacts list
-//                        contactList.clear();
-//                        contactList.addAll(items);
-//
-//                        // refreshing recycler view
-//                        mAdapter.notifyDataSetChanged();
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                // error in getting json
-//                Log.e(TAG, "Error: " + error.getMessage());
-//                Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        MyApplication.getInstance().addToRequestQueue(request);
-//    }
 
     @Override
     public void onRecordSelected(LaptopCheckOutInfo checkOutInfo) {
         //inflate a detailed record view or go to the result page??
         Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getSerialNo() + ", " + checkOutInfo.getLaptopID(), Toast.LENGTH_SHORT).show();
-//        setContentView(R.layout.activity_scanner_result);
-//        getLayoutInflater().inflate(R.layout.laptop_record_details, null);
 
         Intent intent = new Intent(this, ScannerResult.class);
         intent.putExtra("laptop_record_info", checkOutInfo);
@@ -184,10 +130,8 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.action_search)
-                .getActionView();
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(getComponentName()));
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setFocusable(true);
 
@@ -224,7 +168,4 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
         return super.onOptionsItemSelected(item);
     }
 
-    public void initDetailPage(LaptopCheckOutInfo laptopCheckOutInfo) {
-
-    }
 }

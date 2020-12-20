@@ -64,7 +64,11 @@ public class AdminLogin extends AppCompatActivity  {
             }
         });
 
+        //firebase auth
+        //String UserEmailKey = Paper.book().read(Prevalent.UserEmailKey);
+        //String UserPasswordKey = Paper.book().read(Prevalent.UserPasswordKey);
 
+        //ori auth
         String UserEmailKey = Paper.book().read(Prevalent.AdminPhoneKey);
         String UserPasswordKey = Paper.book().read(Prevalent.AdminPasswordKey);
 

@@ -2,15 +2,15 @@ package com.example.spkr.Model;
 
 public class Users
 {
-    private String name, phone, password, image, address, note;
+    private String username, phone, password, image, address, note;
 
     public Users()
     {
 
     }
 
-    public Users(String name, String phone, String password, String image, String address, String note , String email) {
-        this.name = name;
+    public Users(String username, String phone, String password, String image, String address, String note , String email) {
+        this.username = username;
         this.phone = phone;
         this.password = password;
         this.image = image;
@@ -19,12 +19,12 @@ public class Users
     }
 
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String username) {
+        this.username = username;
     }
 
     public String getPhone() {
