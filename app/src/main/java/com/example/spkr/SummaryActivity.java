@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.util.Log;
@@ -44,6 +45,8 @@ public class SummaryActivity extends AppCompatActivity {
 
     private Calendar calendar = Calendar.getInstance();
     private int year = calendar.get(Calendar.YEAR);
+    private int month = calendar.get(Calendar.MONTH);
+    private int day = calendar.get(Calendar.DAY_OF_MONTH);
     private String folderName = "Reports";
     private String fileName = "";
     private String rootPath = "";
@@ -53,7 +56,8 @@ public class SummaryActivity extends AppCompatActivity {
     private List<LaptopInfo> laptopInfoList = new ArrayList<>();
     private List<LaptopCheckOutInfo> laptopCheckOutInfoList = new ArrayList<>();
     private DatabaseReference dreff, dreff1;
-    private String [] headerColumns = {"Serial No.", "Reg No.", "Laptop ID", "Student Name", "Student Class", "Student IC", "Checkout Date", "Return Date", "Status"};
+    private String [] headerColumnsS1 = {"Serial No.", "Reg No.", "Laptop ID", "Student Name", "Student Class", "Student IC", "Checkout Date", "Return Date", "Status"};
+    private String [] headerColumnsS2 = {"Serial No.", "Reg No.", "Laptop ID", "Status"};
 
 
     @Override
@@ -75,8 +79,7 @@ public class SummaryActivity extends AppCompatActivity {
         dreff = FirebaseDatabase.getInstance().getReference().child("Laptop Record");
         dreff1 = FirebaseDatabase.getInstance().getReference().child("Laptop");
 
-        fileName = new StringBuilder().append("Report_").append(year).append(".xlsx").toString(); //Name of the file
-
+        fileName = new StringBuilder().append("Report_").append(year).append(month+1).append(day).append(".xlsx").toString(); //Name of the file
 
         initLaptopRecordList();
         initLaptopList();
@@ -126,9 +129,11 @@ public class SummaryActivity extends AppCompatActivity {
     }
 
     public void createWorkbook () throws IOException {
+        showProgressBar(laptopCheckOutInfoList.size() + laptopInfoList.size());
         //creating an instance of Workbook class
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Checkout Record"); //Creating a sheet
+        Sheet sheet1 = workbook.createSheet("Checkout Record"); //Creating a sheet
+        Sheet sheet2 = workbook.createSheet("Laptop Record");
 
         // Create a Font for styling header cells
         Font headerFont = workbook.createFont();
@@ -141,19 +146,26 @@ public class SummaryActivity extends AppCompatActivity {
         headerCellStyle.setFont(headerFont);
 
         //create header row
-        Row headerRow = sheet.createRow(0);
-        headerRow.setRowStyle(headerCellStyle);
+        Row headerRow1 = sheet1.createRow(0);
+        headerRow1.setRowStyle(headerCellStyle);
+
+        Row headerRow2 = sheet2.createRow(0);
+        headerRow2.setRowStyle(headerCellStyle);
 
         //create header row's column
-        for (int i = 0; i < headerColumns.length; i++) {
-            headerRow.createCell(i).setCellValue(headerColumns[i]);
+        for (int i = 0; i < headerColumnsS1.length; i++) {
+            headerRow1.createCell(i).setCellValue(headerColumnsS1[i]);
+        }
+
+        for (int i = 0; i < headerColumnsS2.length; i++) {
+            headerRow2.createCell(i).setCellValue(headerColumnsS2[i]);
         }
 
         //{"Serial No.", "Reg No.", "Laptop ID", "Student Name", "Student Class", "Student IC", "Checkout Date", "Return Date", "Status"};
         //create data row and insert
-        int rowNum = 1;
+        int rowNum1 = 1, rowNum2 = 1;
         for (LaptopCheckOutInfo lcoi : laptopCheckOutInfoList) {
-            Row dataRow = sheet.createRow(rowNum++);
+            Row dataRow = sheet1.createRow(rowNum1++);
 
             dataRow.createCell(0).setCellValue(lcoi.getSerialNo());
             dataRow.createCell(1).setCellValue(lcoi.getRegistrationNo());
@@ -166,14 +178,21 @@ public class SummaryActivity extends AppCompatActivity {
             dataRow.createCell(8).setCellValue(lcoi.getStatus());
         }
 
-        showProgressBar(laptopCheckOutInfoList);
+        for (LaptopInfo li : laptopInfoList) {
+            Row dataRow = sheet2.createRow(rowNum2++);
+
+            dataRow.createCell(0).setCellValue(li.getSerialNo());
+            dataRow.createCell(1).setCellValue(li.getRegistrationNo());
+            dataRow.createCell(2).setCellValue(li.getLaptopID());
+            dataRow.createCell(3).setCellValue(li.getStatus());
+        }
 
         //create the file to be written
         //File excel = new File("/storage/emulated/0/SPKR/"+folderName+"/"+fileName);
         File excel = new File(rootPath+"/"+fileName);
         if (!excel.exists()) {
             if (excel.createNewFile()){
-                Toast.makeText(this, "File not found, creating new one...", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "File not found, creating new one...", Toast.LENGTH_SHORT).show();
                 logdebug.append("\ncreateNewFile: "+excel.createNewFile()+"\n isReadable: "+excel.canRead()+"\n isWritable: "+excel.canWrite());
             }
             else {
@@ -188,9 +207,16 @@ public class SummaryActivity extends AppCompatActivity {
         workbook.close();
     }
 
-    public void showProgressBar (List list) {
+    public void showProgressBar (int max) {
+        loadingBar.setMax(max);
         for(int i=1; i<=loadingBar.getMax(); i++){
             loadingBar.setProgress(i);
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                }
+//            },1500);
         }
 
         if(loadingBar.getProgress() == loadingBar.getMax()) {
@@ -211,12 +237,13 @@ public class SummaryActivity extends AppCompatActivity {
 
     public void openFileManager(){
         Uri uri = Uri.parse(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString());
-        //startActivity(new Intent(Intent.ACTION_GET_CONTENT).setDataAndType(uri, "*/*"));
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        startActivity(new Intent(Intent.ACTION_GET_CONTENT).setDataAndType(uri, "*/*"));
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
-        startActivityForResult(intent, 1);
+        startActivity(intent);
+        //startActivityForResult(intent, 1);
 
 //        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
 //        intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -352,9 +379,9 @@ public class SummaryActivity extends AppCompatActivity {
 //        }
 
         // Resize all columns to fit the content size
-        for(int i = 0; i < headerColumns.length; i++) {
-            //sheet.setColumnWidth(i, 15);
-        }
+//        for(int i = 0; i < headerColumns.length; i++) {
+//            //sheet.setColumnWidth(i, 15);
+//        }
 
 
 

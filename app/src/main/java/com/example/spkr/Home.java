@@ -87,7 +87,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick (View view) {
                 Toast.makeText(Home.this, "Loading records...", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Home.this, RecordView.class);
+                Intent intent = new Intent(Home.this, LaptopView.class);
                 startActivity(intent);
             }
         });

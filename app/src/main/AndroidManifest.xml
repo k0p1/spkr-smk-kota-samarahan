@@ -40,9 +40,28 @@
 
         <!--            android:theme="@style/AppOverlayTheme"-->
         <activity android:name=".ScannerResult"
-                  android:label="Record Details">
+                  android:label="Scanned Result">
         </activity>
 
+        <activity android:name=".ListDetails"
+                  android:label="Record Details"
+                  android:parentActivityName=".LaptopView">
+
+        </activity>
+
+        <activity android:name=".LaptopView"
+            android:label="Laptop List"
+            android:theme="@style/AppTheme.PopupOverlay"
+            android:parentActivityName=".Home">
+
+            <meta-data android:name="android.app.searchable"
+                        android:resource="@xml/searchable">
+            </meta-data>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+        </activity>
 
         <activity android:name=".RecordView"
                   android:label="Records"

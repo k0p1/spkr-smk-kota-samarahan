@@ -43,18 +43,16 @@ public class LaptopInfo implements Serializable, DAO {
     }
 
     @Override
-    public void setData (String a) {
+    public void setData (String [] a) {
         //do all the ifs (regex) to determine fall into what category
-        if(a.startsWith("NXMZDSM0156320FC")) {
-            this.serialNo = a;
-        }
-
-        else if (a.startsWith("YEA")) {
-            this.registrationNo = a;
-        }
-
-        else if (a.length() <= 3) {
-            this.laptopID = a;
+        for (int i = 0; i < a.length; i++) {
+            if (a[i].startsWith("NXMZDSM0156320FC")) {
+                this.serialNo = a[i];
+            } else if (a[i].startsWith("YEA")) {
+                this.registrationNo = a[i];
+            } else if (a[i].matches("\\d*")) {
+                this.laptopID = a[i];
+            }
         }
     }
 }

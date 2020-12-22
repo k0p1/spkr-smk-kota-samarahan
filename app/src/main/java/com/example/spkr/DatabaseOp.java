@@ -16,9 +16,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseOp extends AppCompatActivity {
 
     private DatabaseReference dreff;
+
     public DatabaseOp () {
         this.dreff = FirebaseDatabase.getInstance().getReference();
     }
@@ -74,27 +78,43 @@ public class DatabaseOp extends AppCompatActivity {
         });
     }
 
-    public boolean isLaptopExist (String key) {
-        final boolean[] exist = {false};
-        Query existRecord = FirebaseDatabase.getInstance().getReference().child("Laptop");
-        existRecord.addValueEventListener(new ValueEventListener() {
+    public void updateLaptopCheckoutInfo (String table, String key, Context appContext, LaptopCheckOutInfo obj) {
+        dreff.child(table).child(key).setValue(obj).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                //hide spinner
+                Toast.makeText(appContext, "Laptop Info updated successfully!",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(appContext, "Failed to update laptop info...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public List<LaptopCheckOutInfo> setLaptopCheckoutInfoList () {
+        List<LaptopCheckOutInfo> laptopCheckOutInfoList = new ArrayList<>();
+
+        Query query = FirebaseDatabase.getInstance().getReference().child("Laptop Record");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    if (postSnapshot.hasChild(key)) {
-                        exist[0] = true;
-                    }
+                    LaptopCheckOutInfo recordRow = postSnapshot.getValue(LaptopCheckOutInfo.class);
+                    laptopCheckOutInfoList.add(recordRow);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                exist[0] = false;
+
             }
         });
 
-        return exist[0];
+        return laptopCheckOutInfoList;
     }
+
 //    public boolean checkIfDataExist (Class clss, String value, DatabaseReference dreff) {
 //            boolean resp = false;
 //            dreff.equalTo(li.getSerialNo()).addListenerForSingleValueEvent(new ValueEventListener() {

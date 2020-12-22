@@ -29,16 +29,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecordView extends AppCompatActivity implements RecordAdapter.RecordAdapterListener {
+public class LaptopView extends AppCompatActivity implements LaptopAdapter.LaptopAdapterListener {
 
     private static final String TAG = Home.class.getSimpleName();
     private RecyclerView recyclerView;
-    private List<LaptopCheckOutInfo> recordList;
-    private RecordAdapter mAdapter;
+    private List<LaptopInfo> laptopInfoList;
+    private LaptopAdapter mAdapter;
     private SearchView searchView;
     private DatabaseOp dbop = new DatabaseOp();
-    private DatabaseReference dreff = dbop.getChild("Laptop Record");
-    private DatabaseReference dreff1 = dbop.getChild("Laptop");
+    private DatabaseReference dreff = dbop.getChild("Laptop");
     private ProgressBar progressBar;
 
     @Override
@@ -53,8 +52,8 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
         getSupportActionBar().setTitle(R.string.toolbar_title);
 
         recyclerView = findViewById(R.id.recycler_view);
-        recordList = new ArrayList<>();
-        mAdapter = new RecordAdapter(this, recordList, this);
+        laptopInfoList = new ArrayList<>();
+        mAdapter = new LaptopAdapter(this, laptopInfoList, this);
 
         // white background notification bar
         whiteNotificationBar(recyclerView);
@@ -69,17 +68,17 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
     }
 
     private void fetchRecords() {
-        Query query = dreff1; //laptop ref
+        Query query = dreff; //laptop ref
         query.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(recordList != null) {
-                    recordList.clear();
+                if(laptopInfoList != null) {
+                    laptopInfoList.clear();
                 }
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    LaptopCheckOutInfo recordRow = postSnapshot.getValue(LaptopCheckOutInfo.class);
-                    recordList.add(recordRow);
+                    LaptopInfo recordRow = postSnapshot.getValue(LaptopInfo.class);
+                    laptopInfoList.add(recordRow);
                 }
 
                 mAdapter.notifyDataSetChanged();
@@ -93,12 +92,12 @@ public class RecordView extends AppCompatActivity implements RecordAdapter.Recor
     }
 
     @Override
-    public void onRecordSelected(LaptopCheckOutInfo checkOutInfo) {
+    public void onRecordSelected(LaptopInfo laptopInfo) {
         //inflate a detailed record view or go to the result page??
-        Toast.makeText(getApplicationContext(), "Selected: " + checkOutInfo.getSerialNo() + ", " + checkOutInfo.getLaptopID(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Selected: " + laptopInfo.getSerialNo() + ", " + laptopInfo.getLaptopID(), Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, ScannerResult.class);
-        intent.putExtra("laptop_info", checkOutInfo);
+        Intent intent = new Intent(this, ListDetails.class);
+        intent.putExtra("laptop_info", laptopInfo);
         this.onPause();
         startActivity(intent);
     }

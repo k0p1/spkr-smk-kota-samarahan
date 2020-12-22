@@ -32,7 +32,7 @@ public class StudentInfo implements Serializable, DAO {
     }
 
     @Override
-    public void setData(String data) {
+    public void setData(String [] data) {
 
     }
 }

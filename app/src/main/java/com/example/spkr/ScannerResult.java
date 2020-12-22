@@ -51,7 +51,7 @@ public class ScannerResult extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.laptop_record_details);
+        setContentView(R.layout.activity_scanner_result);
 
         btn_save = (Button) findViewById(R.id.btn_save);
         btn_edit = (Button) findViewById(R.id.btn_edit);
@@ -316,7 +316,11 @@ public class ScannerResult extends AppCompatActivity {
         serialNo.setText(laptopInfo.getSerialNo());
         regNo.setText(laptopInfo.getRegistrationNo());
         laptopID.setText(laptopInfo.getLaptopID());
-        laptopInfo.setStatus(status.getItemAtPosition(0).toString());
+        for(int i=0; i<status.getCount(); i++){
+            if (status.getItemAtPosition(i).toString().equalsIgnoreCase(laptopInfo.getStatus())) {
+                status.setSelection(i);
+            }
+        }
     }
 
     private void initDisplay (LaptopCheckOutInfo laptopCheckOutInfo) {

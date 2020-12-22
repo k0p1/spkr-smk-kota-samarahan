@@ -29,7 +29,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     private ZXingScannerView mScannerView;
     public Context context;
     public Boolean format = false;
-    private String stripInfo = "";
+    private String hint = "NXMZDSM0156320FCXXXXXX, YEA9999/9999/9999, 999. Replace the leading X and 9 with characters and numbers respectively.";
     protected List<LaptopInfo> laptopInfoList =  new ArrayList<>();
     protected List<LaptopCheckOutInfo> laptopCheckOutInfoList = new ArrayList<>();
     protected LaptopInfo li = new LaptopInfo();
@@ -67,13 +67,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     @Override
     public void handleResult(Result rawResult) {
-        Toast.makeText(ScannerActivity.this, "Verifying...",Toast.LENGTH_SHORT).show();
+        Toast.makeText(ScannerActivity.this, "Verifying...", Toast.LENGTH_SHORT).show();
         //spinning loader
 
+        onPause();
         //once get result do something - db
         if (rawResult.getText() != null) {
             //showScanResultDialog("Is the information/format correct?", rawResult.getText().trim());
-//            if (format) {
+            if (checkFormat(rawResult.getText().trim())) {
                 setObjectData(rawResult.getText(), li);
 
                 if (isLaptopExist(laptopInfoList, li.getSerialNo())) {
@@ -86,17 +87,21 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
                 else {
                     Toast.makeText(ScannerActivity.this, "Record not exist, redirecting to add laptop...", Toast.LENGTH_SHORT).show();
+                    li.setStatus("Vacant");
                     Intent intent = new Intent(ScannerActivity.this, ScannerResult.class);
                     intent.putExtra("laptop_info", li); //return the object li as a serialized object
                     this.finish();
                     startActivity(intent);
                 }
             }
-//            else {
-//                Toast.makeText(ScannerActivity.this, "Format Dialog bug...", Toast.LENGTH_SHORT).show();
-//                    mScannerView.resumeCameraPreview(this);
-//            }
+
+            else {
+                showScanResultDialog("Incorrect Format", "The QR code data format is invalid. Input is \""+rawResult.getText().trim()+"\".\nHint: It should contain "+hint);
+                Toast.makeText(ScannerActivity.this, "Warning", Toast.LENGTH_SHORT).show();
+                mScannerView.resumeCameraPreview(this);
+            }
         }
+    }
 
 
     public void showMessageDialog(String message) {
@@ -132,17 +137,16 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                format = true;
+                onResume();
                 // send data from the AlertDialog to the Activity
                 //EditText editText = customLayout.findViewById(R.id.edit_studentName);
-                Toast.makeText(ScannerActivity.this,"Format correct, please proceed...",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ScannerActivity.this,"Format correct, please proceed...",Toast.LENGTH_SHORT).show();
 //                Intent intent = new Intent(ScannerActivity.this, ScannerResult.class);
 //                intent.putExtra("laptop_info", li); //return the object li as a serialized object
 //                startActivity(intent);
             }
         });
 
-        this.format = format;
         AlertDialog alert = alertDialog.create();
         alert.setCanceledOnTouchOutside(false);
         alert.show();
@@ -171,22 +175,34 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         alert.show();
     }
 
-    private void setObjectData(String raw, LaptopInfo li) {
-        String a = "";
-        int index = 0;
+    private boolean checkFormat(String raw) {
+        boolean result = true;
+        String [] split = raw.trim().split(",");
+        if (split.length != 3) {
+            result = false;
+        }
 
-        while(!raw.isEmpty()) {
-            if (raw.indexOf(",") >= 0) {
-                a = raw.substring(index, raw.indexOf(","));
-                li.setData(a);
-                raw = raw.replace(a + ",", "");
-                continue;
-            } else {
-                a = raw;
-                li.setData(a);
-                break;
+        else {
+            for (int i = 0; i < split.length; i++) {
+                if (split[i].startsWith("NXMZDSM0156320FC")) {
+                    continue;
+                } else if (split[i].startsWith("YEA")) {
+                    continue;
+                } else if (split[i].matches("\\d*")) {
+                    continue;
+                }
+                else {
+                    result = false;
+                    break;
+                }
             }
         }
+        return result;
+    }
+
+    private void setObjectData(String raw, LaptopInfo li) {
+        String [] split = raw.trim().split(",");
+        li.setData(split);
     }
 
     private void initLaptopList () {
