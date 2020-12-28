@@ -31,4 +31,8 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="SearchBar" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="android:textSize">30sp</item>
+    </style>
+
 </resources>

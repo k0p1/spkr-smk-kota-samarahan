@@ -2,6 +2,6 @@ package com.example.spkr;
 
 public class RecordAdapterListener {
 
-    public void onContactSelected(LaptopCheckOutInfo checkOutInfo) {
+    public void onRecordSelected(LaptopCheckOutInfo checkOutInfo) {
     }
 }

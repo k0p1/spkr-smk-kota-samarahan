@@ -14,4 +14,6 @@
         android:layout_height="wrap_content"
         android:scrollbars="vertical" />
 
+<!--    <include layout="@layout/activity_scanner_result" />-->
+
 </RelativeLayout>

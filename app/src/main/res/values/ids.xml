@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="WELCOME" type="id" />
+    <item name="loginlogo" type="id" />
+    <item name="loginemail" type="id" />
+
+</resources>

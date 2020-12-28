@@ -1,10 +1,6 @@
 package com.example.spkr;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +8,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +62,8 @@ import java.util.List;
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final LaptopCheckOutInfo laptopCheckOutInfo = laptopCheckOutInfoListFiltered.get(position);
-        holder.laptopID.setText(laptopCheckOutInfo.laptopInfo.getLaptopID());
-        holder.serialNo.setText(laptopCheckOutInfo.laptopInfo.getSerialNo());
+        holder.laptopID.setText(laptopCheckOutInfo.getLaptopID());
+        holder.serialNo.setText(laptopCheckOutInfo.getSerialNo());
 
 //        Glide.with(context)
 //                .load(contact.getImage())
@@ -93,8 +89,8 @@ import java.util.List;
                     for (LaptopCheckOutInfo  row : laptopCheckOutInfoList) {
 
                         // name match condition. this might differ depending on your requirement
-                        // here we are looking for name or phone number match
-                        if (row.laptopInfo.getLaptopID().toLowerCase().contains(charString.toLowerCase()) || row.laptopInfo.getSerialNo().contains(charSequence)) {
+                        // here we are looking for laptop id or serial number match
+                        if (row.getLaptopID().toLowerCase().contains(charString.toLowerCase()) || row.getSerialNo().contains(charSequence)) {
                             filteredList.add(row);
                         }
                     }

@@ -4,57 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/colorbg">
 
-    <Button
-        android:id="@+id/btn_clickMe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="166dp"
-        android:layout_marginLeft="166dp"
-        android:layout_marginTop="330dp"
-        android:layout_marginEnd="157dp"
-        android:layout_marginRight="157dp"
-        android:layout_marginBottom="353dp"
-        android:text="FireBase Connection"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="178dp"
+        android:layout_height="178dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:srcCompat="@drawable/logo" />
 
-    <Button
-        android:id="@+id/btn_scanner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Launch Scanner"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.636" />
 
-    <Button
-        android:id="@+id/btn_viewRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Record"
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.774" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.261"
+        tools:ignore="MissingConstraints"
+        tools:visibility="invisible" />
 
-<!--    <item-->
-<!--        android:id="@+id/action_search"-->
-<!--        android:icon="@drawable/ic_search_black_24dp"-->
-<!--        android:orderInCategory="100"-->
-<!--        android:title="@string/action_search"-->
-<!--        app:actionViewClass="android.support.v7.widget.SearchView"-->
-<!--        app:showAsAction="always"-->
-<!--        tools:layout_editor_absoluteX="104dp"-->
-<!--        tools:layout_editor_absoluteY="16dp" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

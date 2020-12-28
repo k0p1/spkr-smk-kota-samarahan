@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_view"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_search_category_default"
+        android:title="View Records" />
+
+    <item
+        android:id="@+id/navigation_qr"
+        android:enabled="true"
+        android:icon="@drawable/qr"
+        android:title="QRScan" />
+
+    <item
+        android:id="@+id/navigation_reports"
+        android:icon="@drawable/generate"
+        android:enabled="true"
+        android:title="Generate Report" />
+
+</menu>

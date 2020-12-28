@@ -4,36 +4,71 @@
 
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:theme="@style/AppTheme"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
 
-        <activity android:name=".MainActivity"
-                  android:theme="@style/AppTheme">
+
+        <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".ScannerActivity"
-                  android:theme="@style/AppOverlayTheme"
-                  android:label="Scanner">
+        <activity android:name=".Home">
+            <intent-filter>
+                <category android:name="android.intent.category.HOME"/>
+            </intent-filter>
         </activity>
 
+        <!--                  android:theme="@style/AppOverlayTheme"-->
+        <activity android:name=".ScannerActivity"
+                  android:label="Scanner"
+                  android:parentActivityName=".Home">
+        </activity>
+
+        <!--            android:theme="@style/AppOverlayTheme"-->
         <activity android:name=".ScannerResult"
-            android:theme="@style/AppOverlayTheme"
-            android:label="Scanner">
+                  android:label="Scanned Result"
+                  android:parentActivityName=".ScannerActivity">
+        </activity>
+
+        <activity android:name=".ListDetails"
+                  android:label="Record Details"
+                  android:parentActivityName=".LaptopView"
+                  android:resizeableActivity="true">
+
+        </activity>
+
+        <activity android:name=".LaptopView"
+            android:label="Laptop List"
+            android:theme="@style/AppTheme.PopupOverlay"
+            android:parentActivityName=".Home">
+
+            <meta-data android:name="android.app.searchable"
+                        android:resource="@xml/searchable">
+            </meta-data>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
         </activity>
 
         <activity android:name=".RecordView"
-            android:label="Records"
-            android:theme="@style/AppTheme.PopupOverlay">
+                  android:label="Records"
+                  android:theme="@style/AppTheme.PopupOverlay"
+                  android:parentActivityName=".Home">
 
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -41,6 +76,29 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"  />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".SummaryActivity"
+                  android:label="Summary View"
+                  android:parentActivityName=".Home">
+
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_DOCUMENT"/>
+                <action android:name="android.intent.action.OPEN_DOCUMENT_TREE"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".AdminLogin">
+
+        </activity>
+
+        <activity android:name=".PageLogin" />
+        <activity android:name=".ResetPassword" />
+        <activity android:name=".Register" />
+        <activity android:name=".Login" />
+
+        <activity android:name=".Email_RegisterActivity"
+                  android:parentActivityName=".PageLogin">
 
         </activity>
 

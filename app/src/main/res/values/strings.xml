@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SPKR</string>
+    <string name="app_name">SPiKR</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -10,7 +10,12 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="action_settings">Settings</string>
-    <string name="toolbar_title">Contacts</string>
+    <string name="toolbar_title">Laptop List</string>
     <string name="action_search">Search</string>
-    <string name="search_hint">Type name…</string>
+    <string name="search_hint">Type Laptop ID or Serial Number...</string>
+    <string-array name="laptop_statuses">
+        <item>Vacant</item>
+        <item>Checked Out</item>
+        <item>Defective</item>
+    </string-array>
 </resources>
