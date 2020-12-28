@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Matcher;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 public class Home extends AppCompatActivity {
 
     private ProgressBar progressBar;
-    private BottomNavigationItemView qr;
+    private FloatingActionButton qrScan;
     private Button clickMe, scanner, viewRecord, summary, logout;
     private static final int ZXING_CAMERA_PERMISSION = 1;
     private static final int WRITE_STORAGE_PERMISSION = 2;
@@ -49,7 +50,8 @@ public class Home extends AppCompatActivity {
         summary = (Button) findViewById(R.id.btn_summary);
         logout = (Button) findViewById(R.id.btn_logout);
 
-        qr = findViewById(R.id.navigation_qr);
+        qrScan = findViewById(R.id.fab_qrScanner);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -57,13 +59,13 @@ public class Home extends AppCompatActivity {
                 R.id.navigation_view, R.id.navigation_qr, R.id.navigation_reports)
                 .build();
 
-//        qr.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //Toast.makeText(Home.this, "Opening Scanner...", Toast.LENGTH_SHORT).show();
-//                //launchScanner();
-//            }
-//        });
+        qrScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(Home.this, "Opening Scanner...", Toast.LENGTH_SHORT).show();
+                launchScanner();
+            }
+        });
 
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
