@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,10 +17,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -34,7 +39,11 @@ import java.util.regex.Pattern;
 public class ListDetails extends AppCompatActivity {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private Date co, ret;
+    private final Calendar c = Calendar.getInstance();
+    private int year = c.get(Calendar.YEAR);
+    private int month = c.get(Calendar.MONTH);
+    private int day = c.get(Calendar.DAY_OF_MONTH);
+
     private List<LaptopCheckOutInfo> laptopCheckOutInfoList;
     private List<LaptopInfo> laptopInfoList;
     private LaptopInfo laptopInfo;
@@ -58,19 +67,19 @@ public class ListDetails extends AppCompatActivity {
         dbop = new DatabaseOp();
         laptopCheckOutInfoList = dbop.setLaptopCheckoutInfoList();
 
-        btn_save = (Button) findViewById(R.id.btn_save);
-        btn_edit = (Button) findViewById(R.id.btn_edit);
+        btn_save = findViewById(R.id.btn_save);
+        btn_edit = findViewById(R.id.btn_edit);
 
-        serialNo = (EditText) findViewById(R.id.edit_laptopSerialNo);
-        regNo = (EditText) findViewById(R.id.edit_laptopRegistrationNo);
-        laptopID = (EditText) findViewById(R.id.edit_laptopID);
+        serialNo = findViewById(R.id.edit_laptopSerialNo);
+        regNo = findViewById(R.id.edit_laptopRegistrationNo);
+        laptopID =  findViewById(R.id.edit_laptopID);
 
-        studentName = (EditText) findViewById(R.id.edit_studentName);
-        studentClass = (EditText) findViewById(R.id.edit_studentClass);
-        studentIC = (EditText) findViewById(R.id.edit_studentIC);
-        checkoutDate = (EditText) findViewById(R.id.edit_checkoutDate);
-        returnDate = (EditText) findViewById(R.id.edit_returnDate);
-        status = (Spinner) findViewById(R.id.sp_statusDropdown);
+        studentName = findViewById(R.id.edit_studentName);
+        studentClass =  findViewById(R.id.edit_studentClass);
+        studentIC =  findViewById(R.id.edit_studentIC);
+        checkoutDate = findViewById(R.id.edit_checkoutDate);
+        returnDate = findViewById(R.id.edit_returnDate);
+        status = findViewById(R.id.sp_statusDropdown);
 
         disableEditAll();
 
@@ -138,23 +147,24 @@ public class ListDetails extends AppCompatActivity {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
-                try {
-                    enableEditAll();
-                    dateClickListener(checkoutDate, returnDate);
-                    dateComparison(checkoutDate, returnDate);
-                    //dateInputHandling(checkoutDate, returnDate);
-                    numberInputHandling(laptopID, errSymbol);
-                    numberInputHandling(studentIC, errSymbol);
-                    stringInputHandling(serialNo, errSymbol);
-                    stringInputHandling(regNo, errSymbol);
-                    stringInputHandling(studentName, errSymbol);
-                    stringInputHandling(studentClass, errSymbol);
 
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(),Toast.LENGTH_LONG).show();
-                }
+                enableEditAll();
             }
         });
+
+        try {
+            dateClickListener(checkoutDate, returnDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        numberInputHandling(laptopID, errSymbol);
+        numberInputHandling(studentIC, errSymbol);
+        stringInputHandling(serialNo, errSymbol);
+        stringInputHandling(regNo, errSymbol);
+        stringInputHandling(studentName, errSymbol);
+        stringInputHandling(studentClass, errSymbol);
+
     }
 
     private boolean exist(){
@@ -197,6 +207,10 @@ public class ListDetails extends AppCompatActivity {
         studentClass.setText(laptopCheckOutInfo.getStudentClass());
         studentIC.setText(laptopCheckOutInfo.getStudentIC());
         checkoutDate.setText(laptopCheckOutInfo.getCheckoutDate());
+        if (laptopCheckOutInfo.getReturnDate().isEmpty()) {
+            returnDate.setText(new StringBuilder().append(day+1).append("-").append(month+1).append("-").append(year));
+            returnDate.setTextColor(Color.GRAY);
+        }
         initDropdown(status, laptopCheckOutInfo.getStatus());
     }
 
@@ -240,46 +254,100 @@ public class ListDetails extends AppCompatActivity {
         laptopInfo.setStatus(status.getSelectedItem().toString().trim());
     }
 
-    public void dateClickListener (EditText checkout, EditText ret) throws ParseException {
-        checkout.setOnClickListener(new View.OnClickListener() {
+    public void dateClickListener (EditText checkoutD, EditText returnD) throws ParseException {
+        Date[] co = new Date[1];
+        Date[] ret = new Date[1];
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        if (!returnDate.getText().toString().isEmpty() && !checkoutD.getText().toString().isEmpty()) {
+            try {
+                co[0] = simpleDateFormat.parse(checkoutD.getText().toString());
+                ret[0] = simpleDateFormat.parse(returnD.getText().toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        DatePickerDialog.OnDateSetListener checkoutListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                checkoutD.setText(new StringBuilder().append(dayOfMonth).append("-").append(month + 1).append("-").append(year).toString());
+            }
+        };
+
+        DatePickerDialog.OnDateSetListener returnListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                returnD.setText(new StringBuilder().append(dayOfMonth).append("-").append(month + 1).append("-").append(year).toString());
+            }
+        };
+
+        checkoutD.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                int year = c.get(Calendar.YEAR);
-                int month = c.get(Calendar.MONTH);
-                int day = c.get(Calendar.DAY_OF_MONTH);
-                long currentTimestamp = c.getTimeInMillis();
-
-                datePicker = new DatePickerDialog(ListDetails.this, new DatePickerDialog.OnDateSetListener() {
+                datePicker = new DatePickerDialog(ListDetails.this, checkoutListener, year, month, day) {
                     @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        //validation
-                        checkout.setText(new StringBuilder().append(dayOfMonth).append("-").append(month+1).append("-").append(year).toString());
+                    public void onDateChanged(@NonNull DatePicker view, int year, int month, int dayOfMonth) {
+                        try {
+                            co[0] = simpleDateFormat.parse(checkoutDate.getText().toString());
+                            ret[0] = simpleDateFormat.parse(returnDate.getText().toString());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (co[0].after(ret[0])) {
+                            checkoutDate.setError("Checkout Date must not be later than Return Date");
+                        }
+
+                        else if (co[0].compareTo(ret[0]) == 0){
+                            checkoutDate.setError("Checkout Date must not be the same as Return Date");
+                        }
+
+                        else {
+                            checkoutDate.setError(null);
+                        }
                     }
-                }, year, month, day);
+                };
                 datePicker.create();
                 datePicker.show();
             }
         });
 
-        ret.setOnClickListener(new View.OnClickListener() {
+        //                            if (ret[0].before(co[0])) {
+//                                returnDate.setError("Return Date must not be earlier than Checkout Date");
+//                            }
+
+        returnD.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                int year = c.get(Calendar.YEAR);
-                int month = c.get(Calendar.MONTH);
-                int day = c.get(Calendar.DAY_OF_MONTH);
-                long currentTimestamp = c.getTimeInMillis();
-
-                datePicker = new DatePickerDialog(ListDetails.this, new DatePickerDialog.OnDateSetListener() {
+                datePicker = new DatePickerDialog(ListDetails.this, returnListener, year, month, day) {
                     @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        //validation
-                        ret.setText(new StringBuilder().append(dayOfMonth).append("-").append(month+1).append("-").append(year).toString());
+                    public void onDateChanged(@NonNull DatePicker view, int year, int month, int dayOfMonth) {
+                        try {
+                            co[0] = simpleDateFormat.parse(checkoutD.getText().toString());
+                            ret[0] = simpleDateFormat.parse(returnD.getText().toString());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (ret[0].before(co[0])) {
+                            returnDate.setError("Return Date must not be earlier than Checkout Date");
+                        }
+
+                        else if (ret[0].compareTo(co[0]) == 0){
+                            returnDate.setError("Return Date must not be the same as Checkout Date");
+                        }
+
+                        else {
+                            returnDate.setError(null);
+                        }
                     }
-                }, year, month, day);
+                };
                 datePicker.create();
                 datePicker.show();
             }
@@ -293,8 +361,8 @@ public class ListDetails extends AppCompatActivity {
         disableEdit(studentName);
         disableEdit(studentClass);
         disableEdit(studentIC);
-        disableEdit(checkoutDate);
-        disableEdit(returnDate);
+        checkoutDate.setEnabled(false);
+        returnDate.setEnabled(false);
         status.setEnabled(false);
         status.setClickable(false);
     }
@@ -302,6 +370,7 @@ public class ListDetails extends AppCompatActivity {
     private void disableEdit (EditText editText) {
         editText.setFocusable(false);
         editText.setTextIsSelectable(false);
+        editText.setClickable(false);
     }
 
     private void enableEditAll () {
@@ -311,12 +380,16 @@ public class ListDetails extends AppCompatActivity {
         enableEdit(studentName);
         enableEdit(studentClass);
         enableEdit(studentIC);
+        checkoutDate.setEnabled(true);
+        returnDate.setEnabled(true);
         status.setClickable(true);
+        status.setEnabled(true);
     }
 
     private void enableEdit (EditText editText) {
         editText.setFocusable(true);
         editText.setTextIsSelectable(true);
+        editText.setClickable(true);
     }
 
     private void showSuccessDialog(String key, String op) {
@@ -383,20 +456,14 @@ public class ListDetails extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (validateNumber(s.toString())) {
-                    editText.requestFocus();
-                    editText.setError(onTextErrMsg);
-                } else {
-                    editText.setError(null);
-                }
-
-                if(editText.getText().toString().length() <= 0) {
+                if(s.length() == 0){
                     editText.requestFocus();
                     editText.setError(errBlank);
+                    btn_save.setVisibility(View.INVISIBLE);
                 }
-
                 else {
                     editText.setError(null);
+                    btn_save.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -417,99 +484,21 @@ public class ListDetails extends AppCompatActivity {
                 if (validateText(s.toString())) {
                     editText.requestFocus();
                     editText.setError(onTextErrMsg);
+                    btn_save.setVisibility(View.GONE);
                 } else {
                     editText.setError(null);
+                    btn_save.setVisibility(View.VISIBLE);
                 }
 
                 if(editText.getText().toString().length() <= 0) {
                     editText.requestFocus();
                     editText.setError(errBlank);
+                    btn_save.setVisibility(View.GONE);
                 }
 
                 else {
                     editText.setError(null);
-                }
-            }
-        });
-    }
-
-//    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-//
-//    Date date1 = format.parse(dateString1);
-//    Date date2 = format.parse(dateString2);
-//
-//    if (date1.compareTo(date2) <= 0) {
-//        System.out.println("dateString1 is an earlier date than dateString2");
-//    }
-
-    private void dateComparison (EditText checkoutDate, EditText returnDate){
-        if (!checkoutDate.getText().toString().isEmpty() && !returnDate.getText().toString().isEmpty()) {
-            try {
-                co = simpleDateFormat.parse(checkoutDate.getText().toString());
-                ret = simpleDateFormat.parse(returnDate.getText().toString());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (co.after(ret)) {
-            checkoutDate.setError("Checkout Date must not be later than Return Date");
-        }
-
-        else if (ret.before(co)) {
-            returnDate.setError("Return Date must not be earlier than Checkout Date");
-        }
-
-        else {
-            checkoutDate.setError(null);
-            returnDate.setError(null);
-        }
-    }
-    private void dateInputHandling (EditText checkout, EditText returnDate) {
-        checkout.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString() != null) {
-                    checkout.requestFocus();
-                } else {
-                    checkout.setError(null);
-                }
-            }
-        });
-
-        returnDate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (validateText(s.toString())) {
-                    returnDate.requestFocus();
-                    returnDate.setError("");
-                } else {
-                    returnDate.setError(null);
-                }
-
-                if(returnDate.getText().toString().length() <= 0) {
-                    returnDate.requestFocus();
-                    returnDate.setError(errBlank);
-                }
-
-                else {
-                    returnDate.setError(null);
+                    btn_save.setVisibility(View.VISIBLE);
                 }
             }
         });

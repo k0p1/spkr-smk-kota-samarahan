@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
     implementation 'com.google.firebase:firebase-core:18.0.0'
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -66,5 +67,8 @@ dependencies {
     implementation "org.apache.poi:poi:3.17"	     // For `.xls` files
     implementation "org.apache.poi:poi-ooxml:3.17"	 // For `.xlsx` files
     implementation 'com.fasterxml:aalto-xml:1.0.0'
+
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
 }
 

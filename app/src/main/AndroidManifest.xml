@@ -40,7 +40,8 @@
 
         <!--            android:theme="@style/AppOverlayTheme"-->
         <activity android:name=".ScannerResult"
-                  android:label="Scanned Result">
+                  android:label="Scanned Result"
+                  android:parentActivityName=".ScannerActivity">
         </activity>
 
         <activity android:name=".ListDetails"
@@ -76,7 +77,6 @@
             </intent-filter>
         </activity>
 
-        <!--            android:theme="@style/AppOverlayTheme"-->
         <activity android:name=".SummaryActivity"
                   android:label="Summary View"
                   android:parentActivityName=".Home">

@@ -1,9 +1,11 @@
 package com.example.spkr;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
+import androidx.navigation.ui.AppBarConfiguration;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,11 +14,14 @@ import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Matcher;
@@ -25,6 +30,7 @@ import java.util.regex.Pattern;
 public class Home extends AppCompatActivity {
 
     private ProgressBar progressBar;
+    private BottomNavigationItemView qr;
     private Button clickMe, scanner, viewRecord, summary, logout;
     private static final int ZXING_CAMERA_PERMISSION = 1;
     private static final int WRITE_STORAGE_PERMISSION = 2;
@@ -42,6 +48,49 @@ public class Home extends AppCompatActivity {
         viewRecord = (Button) findViewById(R.id.btn_viewRecord);
         summary = (Button) findViewById(R.id.btn_summary);
         logout = (Button) findViewById(R.id.btn_logout);
+
+        qr = findViewById(R.id.navigation_qr);
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_view, R.id.navigation_qr, R.id.navigation_reports)
+                .build();
+
+//        qr.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //Toast.makeText(Home.this, "Opening Scanner...", Toast.LENGTH_SHORT).show();
+//                //launchScanner();
+//            }
+//        });
+
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_qr:
+                        Toast.makeText(Home.this, "Opening Scanner...", Toast.LENGTH_SHORT).show();
+                        launchScanner();
+                        return true;
+
+                    case R.id.navigation_reports:
+                        Toast.makeText(Home.this, "Going summary page...", Toast.LENGTH_SHORT).show();
+                        launchSummary();
+                        return true;
+
+                    case R.id.navigation_view:
+                        Toast.makeText(Home.this, "Loading records...", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Home.this, LaptopView.class);
+                        startActivity(intent);
+                        return true;
+
+                    default:
+                        Toast.makeText(Home.this, "Not sure what is clicked though...", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+            }
+        });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,12 +140,6 @@ public class Home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    private boolean validate (String text) {
-        Pattern p = Pattern.compile("\\d*");
-        Matcher m = p.matcher(text);
-        return m.matches();
     }
 
     public void launchScanner() {
