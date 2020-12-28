@@ -60,7 +60,7 @@ public class ListDetails extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.laptop_record_details);
+        setContentView(R.layout.scroll_laptop_record_details);
 
         laptopInfoList = new ArrayList<>();
         laptopCheckOutInfoList = new ArrayList<>();

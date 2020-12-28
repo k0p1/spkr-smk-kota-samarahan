@@ -46,7 +46,8 @@
 
         <activity android:name=".ListDetails"
                   android:label="Record Details"
-                  android:parentActivityName=".LaptopView">
+                  android:parentActivityName=".LaptopView"
+                  android:resizeableActivity="true">
 
         </activity>
 
